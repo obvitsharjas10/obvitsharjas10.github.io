@@ -5,15 +5,14 @@
   <meta charset="UTF-8">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
-
     body { font-family: 'Poppins', sans-serif; margin:0; padding:0; background:#ffcce6; overflow-x:hidden;}
 
-    button { border:none; border-radius:50px; cursor:pointer; font-weight:bold; transition:0.3s;}
+    button { border:none; border-radius:20px; cursor:pointer; font-weight:bold; transition:0.3s;}
     button:hover{ transform:scale(1.05);}
 
     /* Pages */
     #loginPage, #landing, #interestPage, #mainContent { width:100%; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; position:absolute; top:0; left:0;}
-    #loginPage { background:#ffb6c1; color:white; }
+    #loginPage { background:#ffb6c1; color:white; overflow:hidden;}
     #loginPage input { padding:10px; margin:5px; border-radius:10px; border:none; width:200px;}
     #loginPage button { padding:10px 30px; background:#ff4d94; color:white; margin-top:10px;}
 
@@ -30,10 +29,9 @@
     /* Interest Selection */
     #interestPage { display:none; padding:20px; text-align:center; min-height:100vh; background:#ffcce6; }
     .interestGrid { display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-top:20px;}
-    .interestBox{ width:140px; height:140px; border-radius:20px; display:flex; flex-direction:column; justify-content:center; align-items:center; cursor:pointer; font-weight:bold; font-size:16px; position:relative; text-align:center; padding:10px; transition: transform 0.3s, box-shadow 0.3s;}
-    .interestBox img{ width:80px; height:80px; border-radius:15px; margin-bottom:5px; object-fit:cover;}
-    .interestBox.selected{ box-shadow:0 0 20px rgba(255,77,148,0.7); transform:scale(1.05);}
-    #continueBtn { position:fixed; right:20px; top:50%; transform:translateY(-50%); padding:15px 30px; background:#ff4d94; color:white;}
+    .interestBtn{ padding:15px 20px; border-radius:15px; cursor:pointer; font-weight:bold; color:white; border:none; transition:0.3s; }
+    .interestBtn.selected{ box-shadow:0 0 15px rgba(255,77,148,0.7); transform:scale(1.05);}
+    #continueBtn { margin-top:30px; padding:15px 30px; background:#ff4d94; color:white; font-size:18px;}
 
     /* Main Vibe Space */
     #mainContent{ display:none; padding:20px; background:#ffcce6; min-height:100vh; text-align:center;}
@@ -60,6 +58,7 @@
   <input type="text" id="username" placeholder="Username"><br>
   <input type="password" id="password" placeholder="Password"><br>
   <button onclick="login()">Login / Signup</button>
+  <div id="loginStarsContainer"></div>
 </div>
 
 <!-- Landing Page -->
@@ -69,7 +68,7 @@
   <div id="starsContainer"></div>
 </div>
 
-<!-- Interest Page -->
+<!-- Interest Selection Page -->
 <div id="interestPage">
   <h1>Select Your Interests</h1>
   <div class="interestGrid" id="interestGrid"></div>
@@ -107,63 +106,62 @@
   const auth = getAuth();
   const db = getFirestore();
 
-  // --- Stars ---
+  // --- Stars & Hearts Function ---
   function createStars(containerId,count){
-    const c=document.getElementById(containerId);
+    const container=document.getElementById(containerId);
     for(let i=0;i<count;i++){
       const s=document.createElement('div'); s.className='star';
       s.style.width=6+Math.random()*10+'px';
       s.style.height=6+Math.random()*10+'px';
       s.style.top=Math.random()*100+'%';
       s.style.left=Math.random()*100+'%';
-      c.appendChild(s);
+      container.appendChild(s);
     }
     for(let i=0;i<count/2;i++){
       const h=document.createElement('div'); h.className='heart';
       h.style.top=Math.random()*100+'%';
       h.style.left=Math.random()*100+'%';
-      c.appendChild(h);
+      container.appendChild(h);
     }
   }
+
+  createStars('loginStarsContainer',50);
   createStars('starsContainer',50);
 
-  // --- Interest & posts setup ---
+  // --- Interests ---
   const interests=[
-    {name:'Art',img:'https://picsum.photos/80/80?random=1'},
-    {name:'Music',img:'https://picsum.photos/80/80?random=2'},
-    {name:'Gaming',img:'https://picsum.photos/80/80?random=3'},
-    {name:'Cooking',img:'https://picsum.photos/80/80?random=4'},
-    {name:'Fashion',img:'https://picsum.photos/80/80?random=5'}
+    {name:'Art', color:'#FFB6C1'},
+    {name:'Music', color:'#FFC0CB'},
+    {name:'Gaming', color:'#FF99CC'},
+    {name:'Cooking', color:'#FFB3CC'},
+    {name:'Fashion', color:'#FFD1DC'},
+    {name:'Nature', color:'#FFCCE5'},
+    {name:'Movies', color:'#FFCCE0'},
+    {name:'Books', color:'#FFD1E6'},
   ];
   let selectedInterests=[];
   const interestGrid=document.getElementById('interestGrid');
-
-  // create interest boxes
-  interests.forEach(intObj=>{
-    const box=document.createElement('div');
-    box.className='interestBox';
-    box.style.background='#ff99cc';
-    box.innerHTML=`<img src="${intObj.img}"><div>${intObj.name}</div>`;
-    box.onclick=()=>{
-      box.classList.toggle('selected');
-      if(selectedInterests.includes(intObj.name)){
-        selectedInterests=selectedInterests.filter(i=>i!==intObj.name);
-      } else { selectedInterests.push(intObj.name);}
+  interests.forEach(i=>{
+    const btn=document.createElement('button');
+    btn.className='interestBtn';
+    btn.style.background=i.color;
+    btn.textContent=i.name;
+    btn.onclick=()=>{
+      btn.classList.toggle('selected');
+      if(selectedInterests.includes(i.name)) selectedInterests=selectedInterests.filter(x=>x!==i.name);
+      else selectedInterests.push(i.name);
       saveInterests();
     };
-    interestGrid.appendChild(box);
+    interestGrid.appendChild(btn);
   });
 
-  // --- Firebase Login / Signup ---
+  // --- Firebase Login ---
   window.login=async function(){
     const username=document.getElementById('username').value;
     const password=document.getElementById('password').value;
     if(!username||!password){alert('Enter username & password'); return;}
-    try{
-      await signInWithEmailAndPassword(auth,username+'@example.com',password);
-    }catch(e){
-      await createUserWithEmailAndPassword(auth,username+'@example.com',password);
-    }
+    try{ await signInWithEmailAndPassword(auth,username+'@example.com',password); }
+    catch(e){ await createUserWithEmailAndPassword(auth,username+'@example.com',password); }
   }
 
   onAuthStateChanged(auth,async(user)=>{
@@ -174,10 +172,8 @@
       const docSnap=await getDoc(docRef);
       if(docSnap.exists()){
         selectedInterests=docSnap.data().interests||[];
-        // mark selected
-        selectedInterests.forEach(i=>{
-          const box=[...document.getElementsByClassName('interestBox')].find(b=>b.textContent.includes(i));
-          if(box) box.classList.add('selected');
+        [...document.getElementsByClassName('interestBtn')].forEach(btn=>{
+          if(selectedInterests.includes(btn.textContent)) btn.classList.add('selected');
         });
       }
     }
@@ -185,16 +181,11 @@
 
   async function saveInterests(){
     const user=auth.currentUser;
-    if(user){
-      await setDoc(doc(db,'users',user.uid),{interests:selectedInterests});
-    }
+    if(user) await setDoc(doc(db,'users',user.uid),{interests:selectedInterests});
   }
 
   // --- Page Flow ---
-  function enterInterestPage(){
-    document.getElementById('landing').style.display='none';
-    document.getElementById('interestPage').style.display='block';
-  }
+  function enterInterestPage(){ document.getElementById('landing').style.display='none'; document.getElementById('interestPage').style.display='block'; }
   function continueToVibeSpace(){
     if(selectedInterests.length===0){ alert("Select at least one interest!"); return;}
     document.getElementById('interestPage').style.display='none';
@@ -233,17 +224,16 @@
       selectedInterests=newSelection.split(',').map(s=>s.trim()).filter(s=>interests.map(i=>i.name).includes(s));
       loadPosts();
       saveInterests();
-      // update boxes
-      [...document.getElementsByClassName('interestBox')].forEach(box=>{
-        if(selectedInterests.includes(box.textContent.trim())) box.classList.add('selected');
-        else box.classList.remove('selected');
+      [...document.getElementsByClassName('interestBtn')].forEach(btn=>{
+        if(selectedInterests.includes(btn.textContent)) btn.classList.add('selected');
+        else btn.classList.remove('selected');
       });
     }
   }
 
   // --- Lightbox ---
-  function openLightbox(src){ document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').style.display='flex';}
-  function closeLightbox(){ document.getElementById('lightbox').style.display='none';}
+  function openLightbox(src){ document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').style.display='flex'; }
+  function closeLightbox(){ document.getElementById('lightbox').style.display='none'; }
 
 </script>
 </body>
