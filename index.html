@@ -11,12 +11,56 @@
       text-align: center;
     }
 
-    h1 {
+    /* Landing page styles */
+    #landing {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #ffb6c1, #ff8fab);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      z-index: 1000;
+    }
+
+    #landing h1 {
+      font-size: 50px;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+    }
+
+    #landing button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      background: white;
+      color: #ff6b81;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    #landing button:hover {
+      background: #ffdfdf;
+    }
+
+    /* Main content styles */
+    #mainContent {
+      display: none;
+      padding-top: 20px;
+    }
+
+    h1.mainTitle {
       color: #333;
       margin-top: 20px;
     }
 
-    button {
+    button.category {
       padding: 10px 20px;
       margin: 5px;
       border: none;
@@ -26,11 +70,10 @@
       font-size: 16px;
     }
 
-    button:hover {
+    button.category:hover {
       background-color: #ff8fab;
     }
 
-    /* Pinterest-style masonry grid */
     #content {
       display: flex;
       flex-wrap: wrap;
@@ -74,21 +117,37 @@
 </head>
 <body>
 
-<h1>✨ My Vibe Space ✨</h1>
-<p>Pick your interests:</p>
+<!-- Landing page -->
+<div id="landing">
+  <h1>Welcome to My Vibe Space</h1>
+  <button onclick="enterSite()">Enter My Vibe Space</button>
+</div>
 
-<button onclick="showContent('art')">🎨 Art</button>
-<button onclick="showContent('roblox')">🎮 Roblox</button>
-<button onclick="showContent('gym')">💪 Gym</button>
-<button onclick="showContent('cooking')">🍳 Cooking</button>
-<button onclick="showContent('fashion')">👗 Fashion</button>
-<button onclick="showContent('music')">🎵 Music</button>
-<button onclick="showContent('study')">📚 Study</button>
+<!-- Main website content -->
+<div id="mainContent">
+  <h1 class="mainTitle">✨ My Vibe Space ✨</h1>
+  <p>Pick your interests:</p>
 
-<div id="content"></div>
+  <button class="category" onclick="showContent('art')">🎨 Art</button>
+  <button class="category" onclick="showContent('roblox')">🎮 Roblox</button>
+  <button class="category" onclick="showContent('gym')">💪 Gym</button>
+  <button class="category" onclick="showContent('cooking')">🍳 Cooking</button>
+  <button class="category" onclick="showContent('fashion')">👗 Fashion</button>
+  <button class="category" onclick="showContent('music')">🎵 Music</button>
+  <button class="category" onclick="showContent('study')">📚 Study</button>
+
+  <div id="content"></div>
+</div>
 
 <script>
-  // Data for posts
+  // Landing page function
+  function enterSite() {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    showContent('art'); // show default category
+  }
+
+  // Posts data
   const postsData = {
     art: [
       {img:"https://via.placeholder.com/200x250?text=Sketch+1", title:"My Sketch", desc:"Check out this digital art!"},
@@ -127,6 +186,7 @@
     ]
   };
 
+  // Show content by category
   let currentCategory = 'art';
   let loadedCount = 0;
 
@@ -155,9 +215,6 @@
       loadMorePosts();
     }
   });
-
-  // Load default category
-  showContent('art');
 </script>
 
 </body>
