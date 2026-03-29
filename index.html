@@ -51,6 +51,14 @@
   <button onclick="showContent('art')">🎨 Art</button>
   <button onclick="showContent('roblox')">🎮 Roblox</button>
   <button onclick="showContent('gym')">💪 Gym</button>
+  <button onclick="showContent('art')">🎨 Art</button>
+<button onclick="showContent('roblox')">🎮 Roblox</button>
+<button onclick="showContent('gym')">💪 Gym</button>
+<button onclick="showContent('cooking')">🍳 Cooking</button>
+<button onclick="showContent('fashion')">👗 Fashion</button>
+<button onclick="showContent('music')">🎵 Music</button>
+<button onclick="showContent('study')">📚 Study</button>
+
 
   <div id="content"></div>
 
@@ -78,6 +86,23 @@
           <div class="post">💪 Leg day tips</div>
         `;
       }
+
+    if (type === "cooking") {
+  content.innerHTML = "<h2>Cooking Posts</h2><p>Recipes 🍳</p>";
+}
+
+if (type === "fashion") {
+  content.innerHTML = "<h2>Fashion Posts</h2><p>Outfits 👗</p>";
+}
+
+if (type === "music") {
+  content.innerHTML = "<h2>Music Posts</h2><p>Songs 🎵</p>";
+}
+
+if (type === "study") {
+  content.innerHTML = "<h2>Study Posts</h2><p>Notes 📚</p>";
+}
+
     }
   </script>
 
