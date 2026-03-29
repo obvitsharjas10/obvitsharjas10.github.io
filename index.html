@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Vibe Space - Pinterest Style</title>
+  <title>My Vibe Space</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,7 +18,7 @@
 
     button {
       padding: 10px 20px;
-      margin: 10px 5px;
+      margin: 5px;
       border: none;
       border-radius: 20px;
       background-color: #ffb6c1;
@@ -30,7 +30,7 @@
       background-color: #ff8fab;
     }
 
-    /* Pinterest-style grid using flex + wrapping */
+    /* Pinterest-style masonry grid */
     #content {
       display: flex;
       flex-wrap: wrap;
@@ -53,7 +53,6 @@
 
     .post img {
       width: 100%;
-      height: auto;
       display: block;
     }
 
@@ -68,8 +67,8 @@
       color: #555;
     }
 
-    @media(max-width: 650px) {
-      .post { width: 90%; }
+    @media(max-width:650px){ 
+      .post{width:90%;} 
     }
   </style>
 </head>
@@ -89,6 +88,7 @@
 <div id="content"></div>
 
 <script>
+  // Data for posts
   const postsData = {
     art: [
       {img:"https://via.placeholder.com/200x250?text=Sketch+1", title:"My Sketch", desc:"Check out this digital art!"},
@@ -140,22 +140,16 @@
   function loadMorePosts(){
     const content = document.getElementById('content');
     const data = postsData[currentCategory];
-    for(let i=loadedCount; i<loadedCount+2 && i<data.length; i++){
-      if(data[i]){
-        const post = document.createElement('div');
-        post.className = 'post';
-        post.innerHTML = `
-          <img src="${data[i].img}" alt="${data[i].title}">
-          <h3>${data[i].title}</h3>
-          <p>${data[i].desc}</p>
-        `;
-        content.appendChild(post);
-      }
+    for(let i = loadedCount; i < loadedCount + 2 && i < data.length; i++){
+      const post = document.createElement('div');
+      post.className = 'post';
+      post.innerHTML = `<img src="${data[i].img}" alt="${data[i].title}"><h3>${data[i].title}</h3><p>${data[i].desc}</p>`;
+      content.appendChild(post);
     }
     loadedCount += 2;
   }
 
-  // Infinite scroll simulation
+  // Infinite scroll
   window.addEventListener('scroll', () => {
     if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 10){
       loadMorePosts();
