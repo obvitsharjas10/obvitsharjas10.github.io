@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Vibe Website</title>
+  <title>My Vibe Space - Pinterest Style</title>
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       background: #f9f9f9;
+      margin: 0;
+      padding: 0;
       text-align: center;
     }
 
     h1 {
       color: #333;
+      margin-top: 20px;
     }
 
     button {
       padding: 10px 20px;
-      margin: 10px;
+      margin: 10px 5px;
       border: none;
       border-radius: 20px;
       background-color: #ffb6c1;
@@ -27,31 +30,55 @@
       background-color: #ff8fab;
     }
 
+    /* Pinterest-style grid using flex + wrapping */
     #content {
-      margin-top: 20px;
-      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px;
     }
 
     .post {
       background: white;
-      padding: 15px;
-      margin: 10px auto;
-      width: 250px;
       border-radius: 15px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 200px;
+      margin-bottom: 15px;
+      text-align: center;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .post img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .post h3 {
+      margin: 10px 0 5px;
+      font-size: 16px;
+    }
+
+    .post p {
+      margin: 0 10px 10px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    @media(max-width: 650px) {
+      .post { width: 90%; }
     }
   </style>
 </head>
-
 <body>
 
-  <h1>✨ My Vibe Space ✨</h1>
-  <p>Pick your interests:</p>
+<h1>✨ My Vibe Space ✨</h1>
+<p>Pick your interests:</p>
 
-  <button onclick="showContent('art')">🎨 Art</button>
-  <button onclick="showContent('roblox')">🎮 Roblox</button>
-  <button onclick="showContent('gym')">💪 Gym</button>
-  <button onclick="showContent('art')">🎨 Art</button>
+<button onclick="showContent('art')">🎨 Art</button>
 <button onclick="showContent('roblox')">🎮 Roblox</button>
 <button onclick="showContent('gym')">💪 Gym</button>
 <button onclick="showContent('cooking')">🍳 Cooking</button>
@@ -59,52 +86,85 @@
 <button onclick="showContent('music')">🎵 Music</button>
 <button onclick="showContent('study')">📚 Study</button>
 
+<div id="content"></div>
 
-  <div id="content"></div>
+<script>
+  const postsData = {
+    art: [
+      {img:"https://via.placeholder.com/200x250?text=Sketch+1", title:"My Sketch", desc:"Check out this digital art!"},
+      {img:"https://via.placeholder.com/200x180?text=Painting", title:"Painting Idea", desc:"Colors and inspiration ✨"},
+      {img:"https://via.placeholder.com/200x220?text=Sketch+2", title:"Sketch 2", desc:"More artwork ideas"}
+    ],
+    roblox: [
+      {img:"https://via.placeholder.com/200x250?text=Roblox+Build", title:"Cool Build", desc:"Fun Roblox creation 🔥"},
+      {img:"https://via.placeholder.com/200x200?text=Obby", title:"Obby Idea", desc:"Level design tips 🎮"},
+      {img:"https://via.placeholder.com/200x180?text=Game", title:"Game Design", desc:"Make it more fun"}
+    ],
+    gym: [
+      {img:"https://via.placeholder.com/200x180?text=Workout", title:"Workout Routine", desc:"Daily exercises 💪"},
+      {img:"https://via.placeholder.com/200x220?text=Leg+Day", title:"Leg Day Tips", desc:"Strength & endurance"},
+      {img:"https://via.placeholder.com/200x250?text=Abs", title:"Abs Training", desc:"Core exercises"}
+    ],
+    cooking: [
+      {img:"https://via.placeholder.com/200x220?text=Recipe", title:"Recipe 1", desc:"Quick and tasty 🍳"},
+      {img:"https://via.placeholder.com/200x180?text=Snack", title:"Snack Ideas", desc:"Easy to make"},
+      {img:"https://via.placeholder.com/200x250?text=Dessert", title:"Dessert", desc:"Sweet treats 🍰"}
+    ],
+    fashion: [
+      {img:"https://via.placeholder.com/200x250?text=Outfit+1", title:"Outfit Idea", desc:"Style tips 👗"},
+      {img:"https://via.placeholder.com/200x200?text=Outfit+2", title:"Look 2", desc:"Trendy & chic"},
+      {img:"https://via.placeholder.com/200x180?text=Accessories", title:"Accessories", desc:"Complete your outfit"}
+    ],
+    music: [
+      {img:"https://via.placeholder.com/200x220?text=Song+1", title:"Song 1", desc:"Great vibes 🎵"},
+      {img:"https://via.placeholder.com/200x180?text=Playlist", title:"Playlist", desc:"My favorite tracks"},
+      {img:"https://via.placeholder.com/200x250?text=Album", title:"New Album", desc:"Check it out"}
+    ],
+    study: [
+      {img:"https://via.placeholder.com/200x180?text=Notes", title:"Study Notes", desc:"Helpful guides 📚"},
+      {img:"https://via.placeholder.com/200x220?text=Tips", title:"Study Hacks", desc:"Time-saving tips"},
+      {img:"https://via.placeholder.com/200x250?text=Revision", title:"Revision", desc:"Quick review sheets"}
+    ]
+  };
 
-  <script>
-    function showContent(type) {
-      const content = document.getElementById("content");
+  let currentCategory = 'art';
+  let loadedCount = 0;
 
-      if (type === "art") {
-        content.innerHTML = `
-          <div class="post">🎨 User1: My sketch!</div>
-          <div class="post">🎨 User2: Digital art ✨</div>
+  function showContent(category){
+    currentCategory = category;
+    loadedCount = 0;
+    document.getElementById('content').innerHTML = '';
+    loadMorePosts();
+  }
+
+  function loadMorePosts(){
+    const content = document.getElementById('content');
+    const data = postsData[currentCategory];
+    for(let i=loadedCount; i<loadedCount+2 && i<data.length; i++){
+      if(data[i]){
+        const post = document.createElement('div');
+        post.className = 'post';
+        post.innerHTML = `
+          <img src="${data[i].img}" alt="${data[i].title}">
+          <h3>${data[i].title}</h3>
+          <p>${data[i].desc}</p>
         `;
+        content.appendChild(post);
       }
-
-      if (type === "roblox") {
-        content.innerHTML = `
-          <div class="post">🎮 Cool Roblox build!</div>
-          <div class="post">🎮 Obby idea 🔥</div>
-        `;
-      }
-
-      if (type === "gym") {
-        content.innerHTML = `
-          <div class="post">💪 Workout routine</div>
-          <div class="post">💪 Leg day tips</div>
-        `;
-      }
-
-    if (type === "cooking") {
-  content.innerHTML = "<h2>Cooking Posts</h2><p>Recipes 🍳</p>";
-}
-
-if (type === "fashion") {
-  content.innerHTML = "<h2>Fashion Posts</h2><p>Outfits 👗</p>";
-}
-
-if (type === "music") {
-  content.innerHTML = "<h2>Music Posts</h2><p>Songs 🎵</p>";
-}
-
-if (type === "study") {
-  content.innerHTML = "<h2>Study Posts</h2><p>Notes 📚</p>";
-}
-
     }
-  </script>
+    loadedCount += 2;
+  }
+
+  // Infinite scroll simulation
+  window.addEventListener('scroll', () => {
+    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 10){
+      loadMorePosts();
+    }
+  });
+
+  // Load default category
+  showContent('art');
+</script>
 
 </body>
 </html>
