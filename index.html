@@ -4,237 +4,223 @@
   <title>My Vibe Space</title>
   <meta charset="UTF-8">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
-    body { font-family: 'Poppins', sans-serif; margin:0; padding:0; background:#ffcce6; overflow-x:hidden;}
+    body { margin:0; font-family:Poppins; background:#ffcce6; overflow:hidden;}
 
-    button { border:none; border-radius:20px; cursor:pointer; font-weight:bold; transition:0.3s;}
-    button:hover{ transform:scale(1.05);}
+    #loginPage, #landing, #interestPage, #mainContent {
+      width:100%; height:100vh;
+      display:flex; flex-direction:column;
+      justify-content:center; align-items:center;
+      position:absolute; top:0; left:0;
+    }
+    #landing, #interestPage, #mainContent { display:none; }
 
-    /* Pages */
-    #loginPage, #landing, #interestPage, #mainContent { width:100%; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; position:absolute; top:0; left:0;}
-    #loginPage { background:#ffb6c1; color:white; overflow:hidden;}
-    #loginPage input { padding:10px; margin:5px; border-radius:10px; border:none; width:200px;}
-    #loginPage button { padding:10px 30px; background:#ff4d94; color:white; margin-top:10px;}
-
-    #landing { background:#ffcce6; color:white; overflow:hidden; display:none; }
-    #landing h1 { font-family:'Pacifico', cursive; font-size:50px; margin-bottom:50px; text-shadow:2px 2px 8px rgba(0,0,0,0.2);}
-    #enterBtn { padding:20px 50px; font-size:24px; background:#ff4d94; color:white;}
+    input { padding:10px; margin:5px; border:none; border-radius:10px;}
+    button { padding:10px 20px; border:none; border-radius:20px; cursor:pointer; }
 
     /* Stars & Hearts */
-    .star, .heart { position:absolute; opacity:0.8; animation:twinkle 2s infinite alternate; }
-    .star{ background:white; border-radius:50%; }
-    .heart{ width:15px; height:15px; background:white; clip-path: polygon(50% 0%, 61% 14%, 75% 14%, 84% 27%, 84% 50%, 50% 90%, 16% 50%, 16% 27%, 25% 14%, 39% 14%);}
-    @keyframes twinkle{0%{opacity:0.3;}100%{opacity:1;}}
+    .star, .heart {
+      position:absolute;
+      opacity:0.8;
+      animation:twinkle 2s infinite alternate;
+    }
+    .star { width:6px; height:6px; border-radius:50%; background:white;}
+    .heart {
+      width:12px; height:12px;
+      clip-path: polygon(50% 0%, 61% 14%, 75% 14%, 84% 27%, 84% 50%, 50% 90%, 16% 50%, 16% 27%, 25% 14%, 39% 14%);
+      background:pink;
+    }
+    @keyframes twinkle { from{opacity:0.3;} to{opacity:1;} }
 
-    /* Interest Selection */
-    #interestPage { display:none; padding:20px; text-align:center; min-height:100vh; background:#ffcce6; }
-    .interestGrid { display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-top:20px;}
-    .interestBtn{ padding:15px 20px; border-radius:15px; cursor:pointer; font-weight:bold; color:white; border:none; transition:0.3s; }
-    .interestBtn.selected{ box-shadow:0 0 15px rgba(255,77,148,0.7); transform:scale(1.05);}
-    #continueBtn { margin-top:30px; padding:15px 30px; background:#ff4d94; color:white; font-size:18px;}
+    /* Interests */
+    .interestBtn {
+      padding:15px;
+      border-radius:15px;
+      margin:5px;
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    .selected { outline:3px solid white; }
 
-    /* Main Vibe Space */
-    #mainContent{ display:none; padding:20px; background:#ffcce6; min-height:100vh; text-align:center;}
-    h1.mainTitle{ font-family:'Pacifico', cursive; color:white; font-size:48px; text-shadow:2px 2px 10px #ff99c2;}
-    #menuBtn{ position:fixed; top:20px; right:20px; padding:10px 15px; border-radius:15px; background:#ff6699; color:white; cursor:pointer; font-weight:bold; z-index:3000;}
-    #addPostBtn{ position:fixed; top:70px; right:20px; padding:10px 15px; border-radius:15px; background:#ff99cc; color:white; cursor:pointer; font-weight:bold; z-index:3000;}
-    #content{ display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-top:100px; }
-    .post{ background:white; border-radius:15px; box-shadow:0 0 10px rgba(255,77,148,0.3); width:200px; margin-bottom:15px; text-align:center; display:flex; flex-direction:column; transition:transform 0.2s, box-shadow 0.2s; }
-    .post img{ width:100%; display:block; border-radius:15px; cursor:pointer;}
-    .post h3{ margin:10px 0 5px; font-size:16px;}
-    .post p{ margin:0 10px 10px; font-size:14px; color:#555;}
-    .post:hover{ transform:translateY(-5px); box-shadow:0 0 20px rgba(255,77,148,0.5);}
-
-    /* Lightbox */
-    #lightbox{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:2000; }
-    #lightbox img{ max-width:80%; max-height:80%; border-radius:15px;}
+    /* Pinterest Grid */
+    #gridContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      width: 90%;
+      max-width: 1200px;
+      margin-top: 20px;
+    }
+    .gridItem {
+      border-radius: 15px;
+      overflow: hidden;
+    }
+    .gridItem img {
+      width: 100%;
+      display: block;
+    }
   </style>
 </head>
 <body>
 
-<!-- Login Page -->
 <div id="loginPage">
   <h1>Login / Signup</h1>
-  <input type="text" id="username" placeholder="Username"><br>
-  <input type="password" id="password" placeholder="Password"><br>
-  <button onclick="login()">Login / Signup</button>
-  <div id="loginStarsContainer"></div>
+  <input id="username" placeholder="Username"><br>
+  <input id="password" type="password" placeholder="Password"><br>
+  <button onclick="login()">Enter</button>
 </div>
 
-<!-- Landing Page -->
 <div id="landing">
-  <h1>Welcome to My Vibe Space</h1>
-  <button id="enterBtn" onclick="enterInterestPage()">Enter My Vibe Space</button>
-  <div id="starsContainer"></div>
+  <h1>Welcome 💖</h1>
+  <button onclick="goInterest()">Enter</button>
 </div>
 
-<!-- Interest Selection Page -->
 <div id="interestPage">
-  <h1>Select Your Interests</h1>
-  <div class="interestGrid" id="interestGrid"></div>
-  <button id="continueBtn" onclick="continueToVibeSpace()">Continue</button>
+  <h2>Pick Your Interests</h2>
+  <div id="interests"></div>
+  <button onclick="goMain()">Continue</button>
 </div>
 
-<!-- Main Vibe Space -->
 <div id="mainContent">
-  <h1 class="mainTitle">✨ My Vibe Space ✨</h1>
-  <button id="menuBtn" onclick="openSettings()">Settings</button>
-  <button id="addPostBtn" onclick="addPostPrompt()">+ Add Post</button>
-  <div id="content"></div>
+  <h1>✨ My Vibe Space ✨</h1>
+  <div id="gridContainer"></div>
 </div>
-
-<!-- Lightbox -->
-<div id="lightbox" onclick="closeLightbox()"><img id="lightboxImg"></div>
 
 <script type="module">
-  // --- Firebase Setup ---
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAY9XUWv2XQnnmGWuS0nm915RWL06Wa6U",
-    authDomain: "my-vibe-space.firebaseapp.com",
-    projectId: "my-vibe-space",
-    storageBucket: "my-vibe-space.appspot.com",
-    messagingSenderId: "807828405073",
-    appId: "1:807828405073:web:261e74ae03443940387170",
-    measurementId: "G-LS9PNQNET2"
+// 🔥 REPLACE THIS WITH YOUR REAL FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "PASTE_REAL_KEY_HERE",
+  authDomain: "my-vibe-space.firebaseapp.com",
+  projectId: "my-vibe-space",
+  storageBucket: "my-vibe-space.appspot.com",
+  messagingSenderId: "807828405073",
+  appId: "1:807828405073:web:261e74ae03443940387170"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore();
+
+// 🌟 Stars
+function stars(){
+  for(let i=0;i<40;i++){
+    let s=document.createElement('div');
+    s.className='star';
+    s.style.top=Math.random()*100+'%';
+    s.style.left=Math.random()*100+'%';
+    document.body.appendChild(s);
+  }
+}
+stars();
+
+// 💖 Hearts
+function hearts(){
+  for(let i=0;i<20;i++){
+    let h=document.createElement('div');
+    h.className='heart';
+    h.style.top=Math.random()*100+'%';
+    h.style.left=Math.random()*100+'%';
+    h.style.background=`hsl(${Math.random()*360},70%,80%)`;
+    document.body.appendChild(h);
+  }
+}
+hearts();
+
+// 🎨 Interests
+const list=["Art","Music","Fashion","Gaming","Cooking","Nature"];
+let selected=[];
+const container=document.getElementById('interests');
+
+list.forEach((name,i)=>{
+  let btn=document.createElement('button');
+  btn.className='interestBtn';
+  btn.innerText=name;
+  btn.style.background=`hsl(${i*60},70%,70%)`;
+
+  btn.onclick=()=>{
+    btn.classList.toggle('selected');
+    if(selected.includes(name)){
+      selected = selected.filter(x=>x!==name);
+    } else {
+      selected.push(name);
+    }
+    save();
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth();
-  const db = getFirestore();
+  container.appendChild(btn);
+});
 
-  // --- Stars & Hearts Function ---
-  function createStars(containerId,count){
-    const container=document.getElementById(containerId);
-    for(let i=0;i<count;i++){
-      const s=document.createElement('div'); s.className='star';
-      s.style.width=6+Math.random()*10+'px';
-      s.style.height=6+Math.random()*10+'px';
-      s.style.top=Math.random()*100+'%';
-      s.style.left=Math.random()*100+'%';
-      container.appendChild(s);
-    }
-    for(let i=0;i<count/2;i++){
-      const h=document.createElement('div'); h.className='heart';
-      h.style.top=Math.random()*100+'%';
-      h.style.left=Math.random()*100+'%';
-      container.appendChild(h);
+// 🔐 Login
+window.login = async ()=>{
+  let u=document.getElementById('username').value;
+  let p=document.getElementById('password').value;
+
+  try{
+    await signInWithEmailAndPassword(auth,u+"@test.com",p);
+  }catch{
+    await createUserWithEmailAndPassword(auth,u+"@test.com",p);
+  }
+};
+
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('landing').style.display='flex';
+
+    let d = await getDoc(doc(db,'users',user.uid));
+    if(d.exists()) {
+      selected = d.data().interests || [];
+      // mark selected buttons
+      document.querySelectorAll('.interestBtn').forEach(btn=>{
+        if(selected.includes(btn.innerText)) btn.classList.add('selected');
+      });
     }
   }
+});
 
-  createStars('loginStarsContainer',50);
-  createStars('starsContainer',50);
+// Save interests to Firestore
+async function save(){
+  let user = auth.currentUser;
+  if(user){
+    await setDoc(doc(db,'users',user.uid),{interests:selected});
+  }
+}
 
-  // --- Interests ---
-  const interests=[
-    {name:'Art', color:'#FFB6C1'},
-    {name:'Music', color:'#FFC0CB'},
-    {name:'Gaming', color:'#FF99CC'},
-    {name:'Cooking', color:'#FFB3CC'},
-    {name:'Fashion', color:'#FFD1DC'},
-    {name:'Nature', color:'#FFCCE5'},
-    {name:'Movies', color:'#FFCCE0'},
-    {name:'Books', color:'#FFD1E6'},
+// Navigation
+window.goInterest = ()=>{
+  document.getElementById('landing').style.display='none';
+  document.getElementById('interestPage').style.display='flex';
+};
+
+window.goMain = ()=>{
+  document.getElementById('interestPage').style.display='none';
+  document.getElementById('mainContent').style.display='flex';
+
+  // Sample Pinterest Grid Images
+  const images = [
+    'https://source.unsplash.com/random/200x200?sig=1',
+    'https://source.unsplash.com/random/200x200?sig=2',
+    'https://source.unsplash.com/random/200x200?sig=3',
+    'https://source.unsplash.com/random/200x200?sig=4',
+    'https://source.unsplash.com/random/200x200?sig=5',
+    'https://source.unsplash.com/random/200x200?sig=6',
   ];
-  let selectedInterests=[];
-  const interestGrid=document.getElementById('interestGrid');
-  interests.forEach(i=>{
-    const btn=document.createElement('button');
-    btn.className='interestBtn';
-    btn.style.background=i.color;
-    btn.textContent=i.name;
-    btn.onclick=()=>{
-      btn.classList.toggle('selected');
-      if(selectedInterests.includes(i.name)) selectedInterests=selectedInterests.filter(x=>x!==i.name);
-      else selectedInterests.push(i.name);
-      saveInterests();
-    };
-    interestGrid.appendChild(btn);
+  const grid = document.getElementById('gridContainer');
+  grid.innerHTML = ''; // clear previous
+  images.forEach(src=>{
+    let div = document.createElement('div');
+    div.className='gridItem';
+    let img = document.createElement('img');
+    img.src = src;
+    div.appendChild(img);
+    grid.appendChild(div);
   });
-
-  // --- Firebase Login ---
-  window.login=async function(){
-    const username=document.getElementById('username').value;
-    const password=document.getElementById('password').value;
-    if(!username||!password){alert('Enter username & password'); return;}
-    try{ await signInWithEmailAndPassword(auth,username+'@example.com',password); }
-    catch(e){ await createUserWithEmailAndPassword(auth,username+'@example.com',password); }
-  }
-
-  onAuthStateChanged(auth,async(user)=>{
-    if(user){
-      document.getElementById('loginPage').style.display='none';
-      document.getElementById('landing').style.display='flex';
-      const docRef=doc(db,'users',user.uid);
-      const docSnap=await getDoc(docRef);
-      if(docSnap.exists()){
-        selectedInterests=docSnap.data().interests||[];
-        [...document.getElementsByClassName('interestBtn')].forEach(btn=>{
-          if(selectedInterests.includes(btn.textContent)) btn.classList.add('selected');
-        });
-      }
-    }
-  });
-
-  async function saveInterests(){
-    const user=auth.currentUser;
-    if(user) await setDoc(doc(db,'users',user.uid),{interests:selectedInterests});
-  }
-
-  // --- Page Flow ---
-  function enterInterestPage(){ document.getElementById('landing').style.display='none'; document.getElementById('interestPage').style.display='block'; }
-  function continueToVibeSpace(){
-    if(selectedInterests.length===0){ alert("Select at least one interest!"); return;}
-    document.getElementById('interestPage').style.display='none';
-    document.getElementById('mainContent').style.display='block';
-  }
-
-  // --- Posts ---
-  const postsData={};
-  interests.forEach(i=>postsData[i.name]=[]);
-  function loadPosts(){
-    const content=document.getElementById('content');
-    content.innerHTML='';
-    selectedInterests.forEach(cat=>{
-      postsData[cat].forEach(post=>{
-        const div=document.createElement('div');
-        div.className='post';
-        div.innerHTML=`<img src="${post.img}" onclick="openLightbox('${post.img}')"><h3>${post.title}</h3><p>${post.desc}</p>`;
-        content.appendChild(div);
-      });
-    });
-  }
-
-  function addPostPrompt(){
-    const cat=prompt("Category?",selectedInterests[0]);
-    if(!cat) return;
-    const img=prompt("Image URL"); if(!img) return;
-    const title=prompt("Title")||"New Post";
-    const desc=prompt("Description")||"Cute content";
-    postsData[cat].push({img,title,desc});
-    loadPosts();
-  }
-
-  function openSettings(){
-    const newSelection=prompt("Edit interests (comma separated)",selectedInterests.join(','));
-    if(newSelection!==null){
-      selectedInterests=newSelection.split(',').map(s=>s.trim()).filter(s=>interests.map(i=>i.name).includes(s));
-      loadPosts();
-      saveInterests();
-      [...document.getElementsByClassName('interestBtn')].forEach(btn=>{
-        if(selectedInterests.includes(btn.textContent)) btn.classList.add('selected');
-        else btn.classList.remove('selected');
-      });
-    }
-  }
-
-  // --- Lightbox ---
-  function openLightbox(src){ document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').style.display='flex'; }
-  function closeLightbox(){ document.getElementById('lightbox').style.display='none'; }
-
+};
 </script>
+
 </body>
 </html>
