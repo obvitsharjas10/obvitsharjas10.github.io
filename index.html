@@ -1,31 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Website</title>
+  <title>My Vibe Website</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f9f9f9;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 20px;
+      background-color: #ffb6c1;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #ff8fab;
+    }
+
+    #content {
+      margin-top: 20px;
+      padding: 20px;
+    }
+
+    .post {
+      background: white;
+      padding: 15px;
+      margin: 10px auto;
+      width: 250px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
+
 <body>
 
-  <h1>Welcome to My Website 💕</h1>
+  <h1>✨ My Vibe Space ✨</h1>
   <p>Pick your interests:</p>
 
   <button onclick="showContent('art')">🎨 Art</button>
   <button onclick="showContent('roblox')">🎮 Roblox</button>
   <button onclick="showContent('gym')">💪 Gym</button>
 
-  <div id="content" style="margin-top:20px;"></div>
+  <div id="content"></div>
 
   <script>
     function showContent(type) {
       const content = document.getElementById("content");
 
       if (type === "art") {
-        content.innerHTML = "<h2>Art Posts</h2><p>People sharing drawings 🎨</p>";
+        content.innerHTML = `
+          <div class="post">🎨 User1: My sketch!</div>
+          <div class="post">🎨 User2: Digital art ✨</div>
+        `;
       }
+
       if (type === "roblox") {
-        content.innerHTML = "<h2>Roblox Posts</h2><p>Game builds and ideas 🎮</p>";
+        content.innerHTML = `
+          <div class="post">🎮 Cool Roblox build!</div>
+          <div class="post">🎮 Obby idea 🔥</div>
+        `;
       }
+
       if (type === "gym") {
-        content.innerHTML = "<h2>Gym Posts</h2><p>Workout tips 💪</p>";
+        content.innerHTML = `
+          <div class="post">💪 Workout routine</div>
+          <div class="post">💪 Leg day tips</div>
+        `;
       }
     }
   </script>
