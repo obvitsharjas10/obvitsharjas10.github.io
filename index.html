@@ -2,21 +2,21 @@
 <html>
 <head>
   <title>My Vibe Space</title>
+  <meta charset="UTF-8">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
+
     body { font-family: 'Poppins', sans-serif; margin:0; padding:0; background:#ffcce6; overflow-x:hidden;}
 
-    /* General Buttons */
     button { border:none; border-radius:50px; cursor:pointer; font-weight:bold; transition:0.3s;}
     button:hover{ transform:scale(1.05);}
 
-    /* Login / Signup */
-    #loginPage, #landing, #interestPage, #mainContent { width:100%; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; position:absolute; top:0; left:0; }
+    /* Pages */
+    #loginPage, #landing, #interestPage, #mainContent { width:100%; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; position:absolute; top:0; left:0;}
     #loginPage { background:#ffb6c1; color:white; }
     #loginPage input { padding:10px; margin:5px; border-radius:10px; border:none; width:200px;}
     #loginPage button { padding:10px 30px; background:#ff4d94; color:white; margin-top:10px;}
 
-    /* Landing Page */
     #landing { background:#ffcce6; color:white; overflow:hidden; display:none; }
     #landing h1 { font-family:'Pacifico', cursive; font-size:50px; margin-bottom:50px; text-shadow:2px 2px 8px rgba(0,0,0,0.2);}
     #enterBtn { padding:20px 50px; font-size:24px; background:#ff4d94; color:white;}
@@ -54,9 +54,9 @@
 </head>
 <body>
 
-<!-- Login / Signup -->
+<!-- Login Page -->
 <div id="loginPage">
-  <h1>Login to My Vibe Space</h1>
+  <h1>Login / Signup</h1>
   <input type="text" id="username" placeholder="Username"><br>
   <input type="password" id="password" placeholder="Password"><br>
   <button onclick="login()">Login / Signup</button>
@@ -64,12 +64,12 @@
 
 <!-- Landing Page -->
 <div id="landing">
-  <h1>Welcome to My Web Space</h1>
+  <h1>Welcome to My Vibe Space</h1>
   <button id="enterBtn" onclick="enterInterestPage()">Enter My Vibe Space</button>
   <div id="starsContainer"></div>
 </div>
 
-<!-- Interest Selection Page -->
+<!-- Interest Page -->
 <div id="interestPage">
   <h1>Select Your Interests</h1>
   <div class="interestGrid" id="interestGrid"></div>
@@ -80,80 +80,115 @@
 <div id="mainContent">
   <h1 class="mainTitle">✨ My Vibe Space ✨</h1>
   <button id="menuBtn" onclick="openSettings()">Settings</button>
-  <button id="addPostBtn" onclick="addPostPrompt()">+ Add Your Own Post</button>
+  <button id="addPostBtn" onclick="addPostPrompt()">+ Add Post</button>
   <div id="content"></div>
 </div>
 
 <!-- Lightbox -->
 <div id="lightbox" onclick="closeLightbox()"><img id="lightboxImg"></div>
 
-<script>
-  // --- Stars & Hearts ---
-  function createStars(containerId, count){
-    const container=document.getElementById(containerId);
+<script type="module">
+  // --- Firebase Setup ---
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAY9XUWv2XQnnmGWuS0nm915RWL06Wa6U",
+    authDomain: "my-vibe-space.firebaseapp.com",
+    projectId: "my-vibe-space",
+    storageBucket: "my-vibe-space.appspot.com",
+    messagingSenderId: "807828405073",
+    appId: "1:807828405073:web:261e74ae03443940387170",
+    measurementId: "G-LS9PNQNET2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const db = getFirestore();
+
+  // --- Stars ---
+  function createStars(containerId,count){
+    const c=document.getElementById(containerId);
     for(let i=0;i<count;i++){
-      const star=document.createElement('div');
-      star.className='star';
-      star.style.width=6+Math.random()*10+'px';
-      star.style.height=6+Math.random()*10+'px';
-      star.style.top=Math.random()*100+'%';
-      star.style.left=Math.random()*100+'%';
-      container.appendChild(star);
+      const s=document.createElement('div'); s.className='star';
+      s.style.width=6+Math.random()*10+'px';
+      s.style.height=6+Math.random()*10+'px';
+      s.style.top=Math.random()*100+'%';
+      s.style.left=Math.random()*100+'%';
+      c.appendChild(s);
     }
     for(let i=0;i<count/2;i++){
-      const heart=document.createElement('div');
-      heart.className='heart';
-      heart.style.top=Math.random()*100+'%';
-      heart.style.left=Math.random()*100+'%';
-      container.appendChild(heart);
+      const h=document.createElement('div'); h.className='heart';
+      h.style.top=Math.random()*100+'%';
+      h.style.left=Math.random()*100+'%';
+      c.appendChild(h);
     }
   }
   createStars('starsContainer',50);
 
-  // --- Login / Signup ---
-  function login(){
-    const username=document.getElementById('username').value;
-    const password=document.getElementById('password').value;
-    if(!username || !password){ alert("Please enter username and password"); return;}
-    document.getElementById('loginPage').style.display='none';
-    document.getElementById('landing').style.display='flex';
-  }
-
-  // --- Interest Selection ---
-  const interests = [
-    {name:'Art', color:'#FFB6C1', img:'https://picsum.photos/80/80?random=1'},
-    {name:'Music', color:'#FF69B4', img:'https://picsum.photos/80/80?random=2'},
-    {name:'Fashion', color:'#FF99CC', img:'https://picsum.photos/80/80?random=3'},
-    {name:'Gaming', color:'#FFB3E6', img:'https://picsum.photos/80/80?random=4'},
-    {name:'Cooking', color:'#FFC0CB', img:'https://picsum.photos/80/80?random=5'},
-    {name:'Mukbangs', color:'#FFB6C1', img:'https://picsum.photos/80/80?random=6'},
-    {name:'Nature', color:'#FFD1DC', img:'https://picsum.photos/80/80?random=7'},
-    {name:'Flowers', color:'#FFCCE5', img:'https://picsum.photos/80/80?random=8'},
-    {name:'Sky', color:'#FFE0F0', img:'https://picsum.photos/80/80?random=9'},
-    {name:'Birds', color:'#FFCCF2', img:'https://picsum.photos/80/80?random=10'},
-    {name:'Animals', color:'#FFB3CC', img:'https://picsum.photos/80/80?random=11'},
-    {name:'School/Study', color:'#FFCCE0', img:'https://picsum.photos/80/80?random=12'},
-    {name:'TV Shows', color:'#FFD1E0', img:'https://picsum.photos/80/80?random=13'},
-    {name:'Room Decor', color:'#FFC4E3', img:'https://picsum.photos/80/80?random=14'}
+  // --- Interest & posts setup ---
+  const interests=[
+    {name:'Art',img:'https://picsum.photos/80/80?random=1'},
+    {name:'Music',img:'https://picsum.photos/80/80?random=2'},
+    {name:'Gaming',img:'https://picsum.photos/80/80?random=3'},
+    {name:'Cooking',img:'https://picsum.photos/80/80?random=4'},
+    {name:'Fashion',img:'https://picsum.photos/80/80?random=5'}
   ];
-
   let selectedInterests=[];
   const interestGrid=document.getElementById('interestGrid');
+
+  // create interest boxes
   interests.forEach(intObj=>{
     const box=document.createElement('div');
     box.className='interestBox';
-    box.style.background=intObj.color;
+    box.style.background='#ff99cc';
     box.innerHTML=`<img src="${intObj.img}"><div>${intObj.name}</div>`;
     box.onclick=()=>{
       box.classList.toggle('selected');
       if(selectedInterests.includes(intObj.name)){
         selectedInterests=selectedInterests.filter(i=>i!==intObj.name);
-      }else{
-        selectedInterests.push(intObj.name);
-      }
+      } else { selectedInterests.push(intObj.name);}
+      saveInterests();
     };
     interestGrid.appendChild(box);
   });
+
+  // --- Firebase Login / Signup ---
+  window.login=async function(){
+    const username=document.getElementById('username').value;
+    const password=document.getElementById('password').value;
+    if(!username||!password){alert('Enter username & password'); return;}
+    try{
+      await signInWithEmailAndPassword(auth,username+'@example.com',password);
+    }catch(e){
+      await createUserWithEmailAndPassword(auth,username+'@example.com',password);
+    }
+  }
+
+  onAuthStateChanged(auth,async(user)=>{
+    if(user){
+      document.getElementById('loginPage').style.display='none';
+      document.getElementById('landing').style.display='flex';
+      const docRef=doc(db,'users',user.uid);
+      const docSnap=await getDoc(docRef);
+      if(docSnap.exists()){
+        selectedInterests=docSnap.data().interests||[];
+        // mark selected
+        selectedInterests.forEach(i=>{
+          const box=[...document.getElementsByClassName('interestBox')].find(b=>b.textContent.includes(i));
+          if(box) box.classList.add('selected');
+        });
+      }
+    }
+  });
+
+  async function saveInterests(){
+    const user=auth.currentUser;
+    if(user){
+      await setDoc(doc(db,'users',user.uid),{interests:selectedInterests});
+    }
+  }
 
   // --- Page Flow ---
   function enterInterestPage(){
@@ -164,18 +199,16 @@
     if(selectedInterests.length===0){ alert("Select at least one interest!"); return;}
     document.getElementById('interestPage').style.display='none';
     document.getElementById('mainContent').style.display='block';
-    loadPosts();
   }
 
   // --- Posts ---
   const postsData={};
-  interests.forEach(intObj=>postsData[intObj.name]=[]);
+  interests.forEach(i=>postsData[i.name]=[]);
   function loadPosts(){
     const content=document.getElementById('content');
     content.innerHTML='';
     selectedInterests.forEach(cat=>{
-      const data=postsData[cat];
-      data.forEach(post=>{
+      postsData[cat].forEach(post=>{
         const div=document.createElement('div');
         div.className='post';
         div.innerHTML=`<img src="${post.img}" onclick="openLightbox('${post.img}')"><h3>${post.title}</h3><p>${post.desc}</p>`;
@@ -184,30 +217,34 @@
     });
   }
 
-  function openSettings(){
-    const newSelection=prompt("Enter interests to add/remove, comma separated:", selectedInterests.join(', '));
-    if(newSelection!==null){
-      selectedInterests=newSelection.split(',').map(s=>s.trim()).filter(s=>interests.map(i=>i.name).includes(s));
-      loadPosts();
-    }
-  }
-
   function addPostPrompt(){
-    const cat=prompt("Which category is this post for?", selectedInterests[0]);
+    const cat=prompt("Category?",selectedInterests[0]);
     if(!cat) return;
-    const img=prompt("Enter image URL:"); if(!img) return;
-    const title=prompt("Enter title:")||"New Post";
-    const desc=prompt("Enter description:")||"Cute content!";
+    const img=prompt("Image URL"); if(!img) return;
+    const title=prompt("Title")||"New Post";
+    const desc=prompt("Description")||"Cute content";
     postsData[cat].push({img,title,desc});
     loadPosts();
   }
 
-  // --- Lightbox ---
-  function openLightbox(src){
-    document.getElementById('lightboxImg').src=src;
-    document.getElementById('lightbox').style.display='flex';
+  function openSettings(){
+    const newSelection=prompt("Edit interests (comma separated)",selectedInterests.join(','));
+    if(newSelection!==null){
+      selectedInterests=newSelection.split(',').map(s=>s.trim()).filter(s=>interests.map(i=>i.name).includes(s));
+      loadPosts();
+      saveInterests();
+      // update boxes
+      [...document.getElementsByClassName('interestBox')].forEach(box=>{
+        if(selectedInterests.includes(box.textContent.trim())) box.classList.add('selected');
+        else box.classList.remove('selected');
+      });
+    }
   }
-  function closeLightbox(){ document.getElementById('lightbox').style.display='none'; }
+
+  // --- Lightbox ---
+  function openLightbox(src){ document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').style.display='flex';}
+  function closeLightbox(){ document.getElementById('lightbox').style.display='none';}
+
 </script>
 </body>
 </html>
